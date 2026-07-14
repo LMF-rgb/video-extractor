@@ -1,7 +1,5 @@
-[app]
+﻿[app]
 title = 视频提取器
-p4a.url = https://gitee.com/mirrors/python-for-android.git
-p4a.fork = mirrors
 package.name = videoextractor
 package.domain = org.videoextractor
 source.dir = ..
@@ -28,6 +26,7 @@ android.presplash_color = #1e1e2e
 android.splash_color = #1e1e2e
 p4a.branch = develop
 p4a.bootstrap = sdl2
+p4a.pip_install_args = --index-url https://pypi.tuna.tsinghua.edu.cn/simple --trusted-host pypi.tuna.tsinghua.edu.cn
 
 android.permissions = INTERNET,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE,FOREGROUND_SERVICE,POST_NOTIFICATIONS
 
