@@ -24,7 +24,7 @@ android.arch = arm64-v8a
 android.allow_backup = True
 android.presplash_color = #1e1e2e
 android.splash_color = #1e1e2e
-p4a.branch = develop
+p4a.branch = master
 p4a.bootstrap = sdl2
 p4a.pip_install_args = --index-url https://pypi.tuna.tsinghua.edu.cn/simple --trusted-host pypi.tuna.tsinghua.edu.cn
 

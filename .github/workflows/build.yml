@@ -12,11 +12,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Java 17
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: '17'
 
       - name: Install system deps
         run: |
@@ -25,36 +25,50 @@ jobs:
             libltdl-dev libffi-dev libssl-dev autoconf libtool cmake git zip unzip \
             libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
             libgstreamer1.0-dev gstreamer1.0-tools libgstreamer-plugins-base1.0-dev \
-            libmtdev-dev libgl1-mesa-dev libgles2-mesa-dev
-
-      - name: Setup pip mirror (Tsinghua)
-        run: |
-          pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
-          pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn
+            libmtdev-dev libgl1-mesa-dev libgles2-mesa-dev xclip xsel
 
       - name: Install Buildozer
         run: |
-          pip install --upgrade pip setuptools wheel
           pip install cython buildozer
+
+      - name: Fix buildozer.spec for GitHub Actions
+        working-directory: android
+        run: |
+          sed -i '/^p4a\.url/d' buildozer.spec
+          sed -i '/^p4a\.fork/d' buildozer.spec
 
       - name: Pre-clone and patch python-for-android
         run: |
           P4A_DIR="android/.buildozer/android/platform/python-for-android"
           mkdir -p "$(dirname $P4A_DIR)"
-          git clone --depth 1 -b develop https://github.com/kivy/python-for-android.git "$P4A_DIR"
-          python3 android/patch_recipes.py "$P4A_DIR"
+          git clone --depth 1 -b master https://github.com/kivy/python-for-android.git "$P4A_DIR"
+
+          for recipe in hostpython3 python3; do
+            RECIPE="$P4A_DIR/pythonforandroid/recipes/$recipe/__init__.py"
+            [ ! -f "$RECIPE" ] && continue
+            sed -i -E 's/(version\s*=\s*['"'"'"])3\.[0-9]+\.[0-9]+(['"'"'"])/\13.12.10\2/' "$RECIPE"
+            sed -i -E 's/\(3,\s*[0-9]+,\s*[0-9]+\)/(3, 12, 10)/' "$RECIPE"
+            echo "=== $recipe version ==="
+            grep -n 'version' "$RECIPE" | head -5
+          done
+
+          KIVY_RECIPE="$P4A_DIR/pythonforandroid/recipes/kivy/__init__.py"
+          if [ -f "$KIVY_RECIPE" ]; then
+            sed -i -E 's/(version\s*=\s*['"'"'"])[^'"'"'"]+(['"'"'"])/\12.3.1\2/' "$KIVY_RECIPE"
+            echo "=== kivy version ==="
+            grep -n 'version' "$KIVY_RECIPE" | head -3
+          fi
 
       - name: Build APK
         working-directory: android
         run: |
           mkdir -p ~/.android
           echo "sdk.dir=$HOME/.buildozer/android/platform/android-sdk" > ~/.android/buildozer.ini 2>/dev/null || true
-          buildozer android debug
+          yes | buildozer android debug
 
       - name: Upload APK
-        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: video-extractor-apk
+          name: 视频提取器-APK
           path: android/bin/*.apk
           retention-days: 30
