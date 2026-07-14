@@ -1,4 +1,4 @@
-﻿[app]
+[app]
 title = 视频提取器
 package.name = videoextractor
 package.domain = org.videoextractor
