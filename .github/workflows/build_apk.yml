@@ -28,15 +28,19 @@ jobs:
         run: |
           pip install cython buildozer
 
+      - name: Fix buildozer.spec for GitHub Actions
+        working-directory: android
+        run: |
+          # GitHub Actions 直连 GitHub，移除国内镜像配置
+          sed -i '/^p4a\.url/d' buildozer.spec
+          sed -i '/^p4a\.fork/d' buildozer.spec
+
       - name: Build APK
         working-directory: android
         run: |
-          # 接受 SDK 许可
           mkdir -p ~/.android
           echo "sdk.dir=$HOME/.buildozer/android/platform/android-sdk" > ~/.android/buildozer.ini 2>/dev/null || true
-          yes | buildozer android debug || true
-          # 第二次尝试（有时第一次会因为下载失败）
-          buildozer android debug
+          yes | buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
