@@ -39,4 +39,27 @@ if os.path.exists(kivy_path):
         f.write(content)
     print("Patched kivy")
 
+# Add configure flags to python3 recipe to skip Unix-only modules
+python3_path = os.path.join(recipes_dir, "python3", "__init__.py")
+if os.path.exists(python3_path):
+    with open(python3_path) as f:
+        content = f.read()
+    # Ensure get_recipe_env includes ac_cv overrides for grp/crypt
+    if "ac_cv_func_setgrent" not in content:
+        # Find get_recipe_env and add the overrides
+        old = "def get_recipe_env(self, arch):"
+        new = '''def get_recipe_env(self, arch):
+        env = super().get_recipe_env(arch)
+        env["ac_cv_func_setgrent"] = "no"
+        env["ac_cv_func_endgrent"] = "no"
+        env["ac_cv_func_getgrent"] = "no"
+        env["ac_cv_func_crypt"] = "no"
+        env["ac_cv_func_crypt_r"] = "no"
+        return env'''
+        if old in content:
+            content = content.replace(old, new)
+            with open(python3_path, "w") as f:
+                f.write(content)
+            print("Patched python3 with ac_cv overrides")
+
 print("Done")
