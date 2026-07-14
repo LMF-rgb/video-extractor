@@ -34,8 +34,11 @@ jobs:
       - name: Fix buildozer.spec for GitHub Actions
         working-directory: android
         run: |
-          sed -i '/^p4a\.url/d' buildozer.spec
-          sed -i '/^p4a\.fork/d' buildozer.spec
+          # Remove gitee mirror lines only if they exist (ignore errors)
+          sed -i '/^p4a\.url\s*=/d' buildozer.spec 2>/dev/null || true
+          sed -i '/^p4a\.fork\s*=/d' buildozer.spec 2>/dev/null || true
+          echo "=== buildozer.spec head ==="
+          head -5 buildozer.spec
 
       - name: Pre-clone and patch python-for-android
         run: |
