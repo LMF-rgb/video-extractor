@@ -1,5 +1,7 @@
 [app]
 title = 视频提取器
+p4a.url = https://gitee.com/mirrors/python-for-android.git
+p4a.fork = mirrors
 package.name = videoextractor
 package.domain = org.videoextractor
 source.dir = ..
