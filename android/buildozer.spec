@@ -8,7 +8,7 @@ source.dir = ..
 source.include_exts = py,png,jpg,kv,atlas,ttf
 source.include_patterns = video_downloader/*.py
 version = 1.0.0
-requirements = python3,kivy>=2.3.0,<=2.3.1,yt-dlp,requests
+requirements = python3,kivy==2.3.1,yt-dlp,requests
 orientation = portrait
 fullscreen = 0
 
