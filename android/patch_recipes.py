@@ -16,9 +16,15 @@ for recipe in ["hostpython3", "python3"]:
     with open(path) as f:
         content = f.read()
     # string version
-    content = re.sub(r'version\s*=\s*["\x273]\.[0-9]+\.[0-9]+["\x27]', 'version = "3.11.11"', content)
+    # Replace version: try both quote styles
+    content = content.replace('version = "3.14.2"', 'version = "3.11.11"')
+    content = content.replace("version = '3.14.2'", 'version = "3.11.11"')
+    # Handle any other 3.x.y version (from previous patches)
+    import re as _re
+    content = _re.sub(r'version\s*=\s*["\']3\.\d+\.\d+["\']', 'version = "3.11.11"', content)
     # tuple version
-    content = re.sub(r'\(3,\s*[0-9]+,\s*[0-9]+\)', '(3, 11, 11)', content)
+    content = content.replace('(3, 14, 2)', '(3, 11, 11)')
+    content = _re.sub(r'\(3,\s*\d+,\s*\d+\)', '(3, 11, 11)', content)
     with open(path, "w") as f:
         f.write(content)
     print(f"Patched {recipe}")
