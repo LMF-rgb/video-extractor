@@ -16,9 +16,9 @@ for recipe in ["hostpython3", "python3"]:
     with open(path) as f:
         content = f.read()
     # string version
-    content = re.sub('version\\s*=\\s*["\\'\\'"]3\\.[0-9]+\\.[0-9]+["\\'\\'"]', 'version = "3.11.11"', content)
+    content = re.sub(r'version\s*=\s*["\x273]\.[0-9]+\.[0-9]+["\x27]', 'version = "3.11.11"', content)
     # tuple version
-    content = re.sub('\\(3,\\s*[0-9]+,\\s*[0-9]+\\)', '(3, 11, 11)', content)
+    content = re.sub(r'\(3,\s*[0-9]+,\s*[0-9]+\)', '(3, 11, 11)', content)
     with open(path, "w") as f:
         f.write(content)
     print(f"Patched {recipe}")
