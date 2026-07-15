@@ -43,6 +43,7 @@ jobs:
       - name: Pre-clone and patch python-for-android
         run: |
           P4A_DIR="android/.buildozer/android/platform/python-for-android"
+          rm -rf "$P4A_DIR"
           mkdir -p "$(dirname $P4A_DIR)"
           git clone --depth 1 -b master https://github.com/kivy/python-for-android.git "$P4A_DIR"
           python3 android/patch_recipes.py "$P4A_DIR"
